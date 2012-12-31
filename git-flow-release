@@ -319,9 +319,7 @@ cmd_finish() {
 		not_authrozied=$(echo "$members" |grep "401" |wc -l)
 		[ $not_authrozied -gt 0 ] && die "401 Unauthorized: check your GITLAB private token: $GITLAB_TOKEN "
 
-		master_ids=$(echo "$members"|json-parse|\
-			awk '{if($1~/id/){a[substr($1,2,index($1,",")-2)]=$2}else if($1~/access_level/ && $2==40)\
-				{print a[substr($1,2,index($1,",")-2)]}}')
+		master_ids=$(java -jar $(dirname $0)/../lib/gitlab/memberid.jar "$members" access_level 40)
 
 		for master_id in $master_ids; do
 			curl -s -X POST -d "source_branch=$MASTER_BRANCH&target_branch=product&assignee_id=$master_id&title=$BRANCH" \

@@ -19,9 +19,9 @@ fi
 if [ -z "$REPO_HOME" ] ; then
 	REPO_HOME="http://github.com/iriya/gitflow.git"
 fi
-
-EXEC_FILES="git-flow json-parse"
+EXEC_FILES="git-flow"
 SCRIPT_FILES="git-flow-init git-flow-feature git-flow-hotfix git-flow-release git-flow-support git-flow-version gitflow-common gitflow-shFlags"
+LIB_FILES="json/memberid.jar json/lib/fastjson-1.1.17.jar"
 SUBMODULE_FILE="gitflow-shFlags"
 
 echo "### gitflow no-make installer ###"
@@ -34,6 +34,7 @@ case "$1" in
 				echo "rm -vf $INSTALL_PREFIX/$script_file"
 				rm -vf "$INSTALL_PREFIX/$script_file"
 			done
+			rm -vrf "$INSTALL_PREFIX/../lib/gitlab"
 		else
 			echo "The '$INSTALL_PREFIX' directory was not found."
 			echo "Do you need to set INSTALL_PREFIX ?"
@@ -72,6 +73,10 @@ case "$1" in
 		done
 		for script_file in $SCRIPT_FILES ; do
 			install -v -m 0644 "$REPO_NAME/$script_file" "$INSTALL_PREFIX"
+		done
+		install -v -d -m 0755 "$INSTALL_PREFIX/../lib/gitlab"
+		for lib_file in $LIB_FILES ; do
+			install -v -m 0644 "$REPO_NAME/$lib_file" "$INSTALL_PREFIX/../lib/gitlab"
 		done
 		exit
 		;;

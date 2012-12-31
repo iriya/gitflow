@@ -31,7 +31,6 @@ prefix=/usr/local
 
 # files that need mode 755
 EXEC_FILES=git-flow
-EXEC_FILES+=json-parse
 
 # files that need mode 644
 SCRIPT_FILES =git-flow-init
@@ -43,18 +42,24 @@ SCRIPT_FILES+=git-flow-version
 SCRIPT_FILES+=gitflow-common
 SCRIPT_FILES+=gitflow-shFlags
 
+LIB_FILES=json/memberid.jar
+LIB_FILES+=json/lib/fastjson-1.1.17.jar
+
 all:
-	@echo "usage: make install"
-	@echo "       make uninstall"
+	OLDPWD=`pwd` && cd json && make && make jar && cd -
 
 install:
 	@test -f gitflow-shFlags || (echo "Run 'git submodule init && git submodule update' first." ; exit 1 )
-	@test -f json-parse || (echo "Run 'git submodule init && git submodule update' first." ; exit 1 )
 	install -d -m 0755 $(prefix)/bin
 	install -m 0755 $(EXEC_FILES) $(prefix)/bin
 	install -m 0644 $(SCRIPT_FILES) $(prefix)/bin
+	install -d -m 0755 $(prefix)/lib/gitlab
+	install -m 0644 $(LIB_FILES) $(prefix)/lib/gitlab
 
 uninstall:
 	test -d $(prefix)/bin && \
 	cd $(prefix)/bin && \
 	rm -f $(EXEC_FILES) $(SCRIPT_FILES)
+	
+	test -d $(prefix)/lib/gitlab && \
+	rm -rf $(prefix)/lib/gitlab
