@@ -40,6 +40,7 @@ xcopy "%~dp0\..\git-flow*"           "%GIT_HOME%\bin"                 /Y /R /F |
 xcopy "%~dp0\..\gitflow-*"           "%GIT_HOME%\bin"                 /Y /R /F || set ERR=1
 xcopy "%~dp0\..\shFlags\src\shflags" "%GIT_HOME%\bin\gitflow-shFlags" /Y /R /F || set ERR=1
 xcopy "%~dp0\..\json\*.jar"			 "%GIT_HOME%\lib\gitlab"		  /Y /R /F || set ERR=1
+xcopy "%~dp0\..\json\lib\*.jar"		 "%GIT_HOME%\lib\gitlab"		  /Y /R /F || set ERR=1
 
 if %ERR%==1 choice /T 30 /C Y /D Y /M "Some unexpected errors happened. Sorry, you'll have to fix them by yourself."
 
