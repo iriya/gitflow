@@ -31,6 +31,7 @@ prefix=/usr/local
 
 # files that need mode 755
 EXEC_FILES=git-flow
+EXEC_FILES+=json-parse
 
 # files that need mode 644
 SCRIPT_FILES =git-flow-init
@@ -48,6 +49,7 @@ all:
 
 install:
 	@test -f gitflow-shFlags || (echo "Run 'git submodule init && git submodule update' first." ; exit 1 )
+	@test -f json-parse || (echo "Run 'git submodule init && git submodule update' first." ; exit 1 )
 	install -d -m 0755 $(prefix)/bin
 	install -m 0755 $(EXEC_FILES) $(prefix)/bin
 	install -m 0644 $(SCRIPT_FILES) $(prefix)/bin

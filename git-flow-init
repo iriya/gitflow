@@ -308,6 +308,47 @@ cmd_default() {
 		[ "$answer" = "-" ] && prefix= || prefix=${answer:-$default_suggestion}
 		git_do config gitflow.prefix.versiontag "$prefix"
 	fi
+	
+	
+	# GITLAB settings
+	# 1. private token
+	# 2. gitlab host
+	# 3. project id
+	
+	local token
+	local host
+	local projectid
+	
+	if ! git config --get gitlab.token >/dev/null 2>&1 || flag force; then
+		default_suggestion=$(git config --get gitlab.token || echo "")
+		printf "Your private token for access GITLAB? [$default_suggestion] "
+		read answer
+		[ "$answer" = "-" ] && prefix= || token=${answer:-$default_suggestion}
+		
+		if [ ! "$token" = "" ]; then
+			git_do config gitlab.token "$token"
+		fi
+	fi
+	
+	if ! git config --get gitlab.host >/dev/null 2>&1 || flag force; then
+		default_suggestion=$(git config --get gitlab.host || echo "git.jrj.cn")
+		printf "GITLAB host? [$default_suggestion] "
+		read answer
+		[ "$answer" = "-" ] && prefix= || host=${answer:-$default_suggestion}
+		
+		git_do config gitlab.host "$host"
+	fi
+	
+	if ! git config --get gitlab.projectid >/dev/null 2>&1 || flag force; then
+		default_suggestion=$(git config --get gitlab.projectid || echo "")
+		printf "Your project id on GITLAB? [$default_suggestion] "
+		read answer
+		[ "$answer" = "-" ] && prefix= || projectid=${answer:-$default_suggestion}
+		
+		if [ ! "$projectid" = "" ]; then
+			git_do config gitlab.projectid "$projectid"
+		fi
+	fi
 
 
 	# TODO: what to do with origin?
