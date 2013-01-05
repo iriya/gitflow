@@ -22,11 +22,11 @@ echo getopt.exe... Found
 
 if not exist "%GIT_HOME%\bin\git-flow" goto :Install
 echo GitFlow is already installed.>&2
-set /p mychoice="Do you want to replace it [y/n]"
-if "%mychoice%"=="y" goto :DeleteOldFiles
-goto :Abort
+choice /C YN /M "Do you want to replace it"
+if errorlevel 255 goto :Abort
+if errorlevel 2 goto :Abort
+if not errorlevel 1 goto :Abort
 
-:DeleteOldFiles
 echo Deleting old files...
 for /F %%i in ("%GIT_HOME%\git-flow*" "%GIT_HOME%\gitflow-*") do if exist "%%~fi" del /F /Q "%%~fi"
 
@@ -39,8 +39,6 @@ if errorlevel 1 set ERR=1
 xcopy "%~dp0\..\git-flow*"           "%GIT_HOME%\bin"                 /Y /R /F || set ERR=1
 xcopy "%~dp0\..\gitflow-*"           "%GIT_HOME%\bin"                 /Y /R /F || set ERR=1
 xcopy "%~dp0\..\shFlags\src\shflags" "%GIT_HOME%\bin\gitflow-shFlags" /Y /R /F || set ERR=1
-xcopy "%~dp0\..\json\*.jar"			 "%GIT_HOME%\lib\gitlab"		  /Y /R /F || set ERR=1
-xcopy "%~dp0\..\json\lib\*.jar"		 "%GIT_HOME%\lib\gitlab"		  /Y /R /F || set ERR=1
 
 if %ERR%==1 choice /T 30 /C Y /D Y /M "Some unexpected errors happened. Sorry, you'll have to fix them by yourself."
 
@@ -65,7 +63,6 @@ goto :End
 :ChkGetopt
 :: %1 is getopt.exe
 if exist "%GIT_HOME%\bin\%1" goto :EOF
-if exist "%USERPROFILE%\bin\%1" goto :EOF
 if exist "%~f$PATH:1" goto :EOF
 echo %GIT_HOME%\bin\%1 not found.>&2
 echo You have to install this file manually. See the GitFlow README.

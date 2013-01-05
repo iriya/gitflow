@@ -45,6 +45,7 @@ init() {
   GITLAB_HOST=$(git config --get gitlab.host)
   GITLAB_PROJECTID=$(git config --get gitlab.projectid)
   GITLAB_TOKEN=$(git config --get gitlab.token)
+  GITLAB_ASSIGNNEEID=$(git config --get gitlab.assigneeid)
 }
 
 usage() {
@@ -340,24 +341,10 @@ cmd_finish() {
 	# POST http://GITLAB_HOST/api/v3/projects/:id/merge_requests?private_token=
 	# source_branch=master&target_branch=product&assignee_id=&title=
 	# 
-	# Implements:
-	# first we'll get all members from this project
-	# then check if someone has the "master" access (access_level=40)
-	# and call "create merge" for each master
 	
-	if flag mergerequest; then
-		members=$(curl -s "http://$GITLAB_HOST/api/v3/projects/$GITLAB_PROJECTID/members?private_token=$GITLAB_TOKEN" ||\
-			 die "ERROR: check your GITLAB host: $GITLAB_HOST. ")
-		# check if unauthorized
-		not_authrozied=$(echo "$members" |grep "401" |wc -l)
-		[ $not_authrozied -gt 0 ] && die "401 Unauthorized: check your GITLAB private token: $GITLAB_TOKEN "
-
-		master_ids=$(java -jar $(dirname $0)/../lib/gitlab/memberid.jar "$members" access_level 40)
-
-		for master_id in $master_ids; do
-			curl -s -X POST -d "source_branch=$MASTER_BRANCH&target_branch=product&assignee_id=$master_id&title=$BRANCH" \
+	if flag mergerequest; then	
+		curl -s -X POST -d "source_branch=$MASTER_BRANCH&target_branch=product&assignee_id=$GITLAB_ASSIGNNEEID&title=$BRANCH" \
 				"http://$GITLAB_HOST/api/v3/projects/$GITLAB_PROJECTID/merge_requests?private_token=$GITLAB_TOKEN"
-		done
 	fi
 	
 

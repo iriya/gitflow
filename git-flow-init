@@ -314,10 +314,12 @@ cmd_default() {
 	# 1. private token
 	# 2. gitlab host
 	# 3. project id
+	# 4. assignee id
 	
 	local token
 	local host
 	local projectid
+	local assigneeid
 	
 	if ! git config --get gitlab.token >/dev/null 2>&1 || flag force; then
 		default_suggestion=$(git config --get gitlab.token || echo "")
@@ -347,6 +349,17 @@ cmd_default() {
 		
 		if [ ! "$projectid" = "" ]; then
 			git_do config gitlab.projectid "$projectid"
+		fi
+	fi
+	
+	if ! git config --get gitlab.assigneeid >/dev/null 2>&1 || flag force; then
+		default_suggestion=$(git config --get gitlab.assigneeid || echo "")
+		printf "Your project master's id on GITLAB? [$default_suggestion] "
+		read answer
+		[ "$answer" = "-" ] && prefix= || assigneeid=${answer:-$default_suggestion}
+		
+		if [ ! "$projectid" = "" ]; then
+			git_do config gitlab.assigneeid "$assigneeid"
 		fi
 	fi
 
